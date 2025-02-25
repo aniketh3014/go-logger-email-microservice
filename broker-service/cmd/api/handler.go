@@ -14,7 +14,7 @@ type RequestPayload struct {
 
 type AuthPayload struct {
 	Email    string `json:"email"`
-	Password string `json:"passowrd"`
+	Password string `json:"password"`
 }
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +52,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 		return
 	}
 
-	// call the servbice
+	// call the service
 	req, err := http.NewRequest("POST", "http://authentication-service/authenticate", bytes.NewBuffer(jsonData))
 	if err != nil {
 		app.errJSON(w, err)
@@ -76,7 +76,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	// read the response
 	var jsonFromServce jsonResponse
 
-	err = json.NewDecoder(res.Body).Decode(jsonFromServce)
+	err = json.NewDecoder(res.Body).Decode(&jsonFromServce)
 	if err != nil {
 		app.errJSON(w, err)
 		return
