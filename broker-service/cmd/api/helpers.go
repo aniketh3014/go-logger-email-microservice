@@ -59,7 +59,11 @@ func (app *Config) errJSON(w http.ResponseWriter, err error, status ...int) erro
 
 	var payLoad jsonResponse
 	payLoad.Error = true
-	payLoad.Message = err.Error()
+	if err != nil {
+		payLoad.Message = err.Error()
+	} else {
+		payLoad.Message = "an error occurred"
+	}
 
 	return app.writeJSON(w, statusCode, payLoad)
 }

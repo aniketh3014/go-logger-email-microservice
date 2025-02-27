@@ -1,3 +1,4 @@
 broker-service/brokerService
 front-end/frontEndService
+authentication-service/authService
 proj/dbdata

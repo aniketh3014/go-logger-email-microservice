@@ -67,10 +67,12 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	}
 	defer res.Body.Close()
 	//get back currect status code
-	if res.StatusCode == http.StatusUnauthorized {
+	if res.StatusCode == http.StatusBadRequest {
 		app.errJSON(w, errors.New("invalied creds"))
+		return
 	} else if res.StatusCode != http.StatusAccepted {
 		app.errJSON(w, errors.New("error calling auth service"))
+		return
 	}
 
 	// read the response
@@ -83,7 +85,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	}
 
 	if jsonFromServce.Error {
-		app.errJSON(w, err, http.StatusUnauthorized)
+		app.errJSON(w, errors.New(jsonFromServce.Message), http.StatusUnauthorized)
 		return
 	}
 
