@@ -34,6 +34,8 @@ func main() {
 	}
 	mongoClient = mongo
 
+	log.Println("connected to mongo!")
+
 	// create a context to disconnect form mongo
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -48,11 +50,29 @@ func main() {
 		Models: data.New(mongoClient),
 	}
 
+	// start the server
+	// go app.Serve()
+	log.Println("starting logger service on port: ", wbePort)
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%s", wbePort),
+		Handler: app.routes(),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func (app *Config) Serve() {
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", wbePort),
+		Addr:    fmt.Sprintf(":%s", wbePort),
+		Handler: app.routes(),
+	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Panic()
 	}
 }
 

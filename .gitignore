@@ -1,4 +1,5 @@
 broker-service/brokerService
 front-end/frontEndService
+logger-service/loggerService
 authentication-service/authService
 proj/dbdata
