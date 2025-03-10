@@ -47,7 +47,6 @@ func (app *Config) writeJSON(w http.ResponseWriter, status int, data any, header
 	}
 
 	return nil
-
 }
 
 func (app *Config) errJSON(w http.ResponseWriter, err error, status ...int) error {
