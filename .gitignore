@@ -2,4 +2,6 @@ broker-service/brokerService
 front-end/frontEndService
 logger-service/loggerService
 authentication-service/authService
+mailer-service/mailerService
+listener-service/listenerService
 proj/dbdata
