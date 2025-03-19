@@ -56,6 +56,9 @@ func main() {
 	err = rpc.Register(new(RPCServer))
 	go app.rpcListen()
 
+	// start grpc server
+	go app.gRPCListen()
+
 	log.Println("starting logger service on port: ", wbePort)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", wbePort),

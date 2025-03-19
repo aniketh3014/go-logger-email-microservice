@@ -10,6 +10,8 @@
                 <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Auth</a>
                 <a id="logBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Logger</a>
                 <a id="mailBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Mail</a>
+                <a id="logGrpc" class="btn btn-outline-secondary" href="javascript:void(0);">Test gRPC log</a>
+
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
                 </div>
@@ -38,6 +40,7 @@
         let authBrokerBtn = document.getElementById("authBrokerBtn");
         let logBrokerBtn = document.getElementById("logBrokerBtn");
         let mailBtn = document.getElementById("mailBtn");
+        let logGrpcBtn = document.getElementById("logGrpc");
 
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
@@ -134,6 +137,41 @@
             }
 
             fetch("http:\/\/localhost:8080/handle", body)
+            .then((response) => response.json())
+            .then((data) => {
+                sent.innerHTML=JSON.stringify(payload, undefined, 4);
+                received.innerHTML = JSON.stringify(data, undefined, 4);
+
+                if (data.error) {
+                    output.innerHTML += `<br><strong>Error</strong>: ${data.message}`;
+                } else {
+                    output.innerHTML += `<br><strong>Response from broker</strong>: ${data.message}`;
+                }
+            })
+            .catch((error) => {
+                output.innerHTML += `<br><strong>Error</strong>: ${error.message}`;
+            });
+        })
+
+        logGrpcBtn.addEventListener("click", function() {
+            const payload = {
+                action: "log",
+                log: {
+                    name: "event",
+                    data: "This message is logged via gRPC",
+                }
+            }
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            const body = {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(payload)
+            }
+
+            fetch("http:\/\/localhost:8080/log-grpc", body)
             .then((response) => response.json())
             .then((data) => {
                 sent.innerHTML=JSON.stringify(payload, undefined, 4);

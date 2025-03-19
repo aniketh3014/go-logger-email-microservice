@@ -5,3 +5,5 @@ authentication-service/authService
 mailer-service/mailerService
 listener-service/listenerService
 proj/dbdata
+logger-service/protos/gen
+broker-service/protos/gen

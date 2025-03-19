@@ -2,11 +2,17 @@ package main
 
 import (
 	"broker/event"
+	protos "broker/protos/gen"
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"net/rpc"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type RequestPayload struct {
@@ -67,6 +73,46 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	default:
 		app.errJSON(w, errors.New("unknown action"))
 	}
+}
+
+func (app *Config) LogViagRPC(w http.ResponseWriter, r *http.Request) {
+	var reqPayload RequestPayload
+
+	err := app.readJSON(w, r, &reqPayload)
+	if err != nil {
+		app.errJSON(w, err)
+		return
+	}
+
+	conn, err := grpc.NewClient("logger-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		app.errJSON(w, err)
+		return
+	}
+	defer conn.Close()
+
+	c := protos.NewLogServiceClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	_, err = c.WriteLog(ctx, &protos.LogRequest{
+		LogEntry: &protos.Log{
+			Name: reqPayload.Log.Name,
+			Data: reqPayload.Log.Data,
+		},
+	})
+
+	if err != nil {
+		app.errJSON(w, err)
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "logged via gRPC"
+
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
 
 func (app *Config) logViaRPC(w http.ResponseWriter, l LogPayload) {
