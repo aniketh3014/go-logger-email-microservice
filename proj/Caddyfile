@@ -1,0 +1,12 @@
+{
+    email ghoshaniket050@gmail.com
+}
+
+:8083 {
+    encode zstd gzip
+    reverse_proxy front-end:8083
+}
+
+:8080 {
+    reverse_proxy broker-service:8080
+}

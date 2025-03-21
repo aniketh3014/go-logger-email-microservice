@@ -5,10 +5,23 @@ services:
       dockerfile: ./../broker-service/Dockerfile
     restart: always
     ports:
-      - "8080:80"
+      - "8080:8080"
     deploy:
       mode: replicated
       replicas: 1
+
+  front-end:
+    build:
+      context: ./../front-end
+      dockerfile: ./../front-end/Dockerfile
+    restart: always
+    ports:
+      - "8083:8083"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      BROKER_URL: "http://localhost:8080"
 
   logger-service:
     build:

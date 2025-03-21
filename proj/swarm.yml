@@ -1,0 +1,139 @@
+version: "3"
+
+services:
+  caddy:
+    image: aniketg2/caddy:1.0.9
+    ports:
+      - "8083:8083"
+      - "8080:8080"
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - microapp
+
+  front-end:
+    image: aniketg2/front-end:1.0.3
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      BROKER_URL: "http://localhost:8080"
+    networks:
+      - microapp
+
+  broker-service:
+    image: aniketg2/broker-service:1.0.1
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - microapp
+
+  logger-service:
+    image: aniketg2/logger-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - microapp
+
+  authentication-service:
+    image: aniketg2/authentication-service:1.0.0
+    ports:
+      - "8081:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - microapp
+    environment:
+      DSN: "host=postgres user=postgres password=password dbname=users sslmode=disable connect_timeout=5"
+
+  mailer-service:
+    image: aniketg2/mail-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - microapp
+    environment:
+      MAIL_HOST: "mailhog"
+      MAIL_PORT: "1025"
+      MAIL_DOMAIN: "localhost"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_FROMNAME: "Aniket Ghosh"
+      MAIL_FROMADDRESS: "aniket.ghosh@example.com"
+      MAIL_ENCRYPTION: "none"
+
+  listener-service:
+    image: aniketg2/listener-service:1.0.1
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - microapp
+
+  postgres:
+    image: postgres:14.2
+    ports:
+      - "5432:5432"
+    deploy:
+      mode: global
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: users
+    networks:
+      - microapp
+    volumes:
+      - ./dbdata/postgres/:/var/lib/postgresql/data/
+
+  mongo:
+    image: mongo:5.0.3
+    ports:
+      - "27017:27017"
+    deploy:
+      mode: global
+    environment:
+      MONGO_INITDB_DATABASE: logs
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - microapp
+    volumes:
+      - ./dbdata/mongo:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3.9.7-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    deploy:
+      mode: global
+    networks:
+      - microapp
+    volumes:
+      - ./dbdata/rabbitmq:/var/lib/rabbitmq/
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    deploy:
+      mode: global
+    networks:
+      - microapp
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  microapp:
+    driver: overlay
