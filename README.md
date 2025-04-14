@@ -3,8 +3,8 @@
 ![Go Microservices Logo](https://via.placeholder.com/200x100?text=Go+Microservices)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go Report Card](https://goreportcard.com/badge/github.com/yourusername/go-micro)](https://goreportcard.com/report/github.com/yourusername/go-micro)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/yourusername/go-micro)](https://golang.org/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aniketh3014/go-logger-email-microservice)](https://goreportcard.com/report/github.com/aniketh3014/go-logger-email-microservice)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/aniketh3014/go-logger-email-microservice)](https://golang.org/)
 
 A robust, scalable microservices architecture built with Golang, showcasing modern development patterns and deployment options including Docker, Kubernetes, and Docker Swarm.
 
@@ -110,7 +110,7 @@ go-micro/
     └── swarm.yml            # Docker Swarm configuration
 ```
 
-## 🙏 Resources
+## Resources
 
 - [Chi Router](https://github.com/go-chi/chi)
 - [MongoDB Go Driver](https://github.com/mongodb/mongo-go-driver)
